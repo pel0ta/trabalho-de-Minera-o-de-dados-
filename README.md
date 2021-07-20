@@ -1,2 +1,2 @@
-# trabalho-de-Minera-o-de-dados-
+# trabalho-de-Mineração-de-dados-
 Trabalho final de Mineração de dados
