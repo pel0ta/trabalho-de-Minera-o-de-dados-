@@ -1,0 +1,158 @@
+btn=read.table("C:\\Users\\marcu\\Desktop\\MINERAÇÃO\\adult.csv", sep=";")
+btn
+mean(btn[,1])
+#moda coluna2
+getmode <- function(btn[,2]) {
+    uniqv <- unique(btn[,2])
+    uniqv[which.max(tabulate(match(btn[,2], uniqv)))]}
+result <- getmode(btn[,2])
+print(result)
+#coluna2 recebe moda
+for(i in 1:nrow(btn)){
+    if(btn[i,2]== "?,"){
+	btn[i,2] = result
+        cat("ok ",i,"\n")
+        
+    }
+}
+#coluna 7 faltando dados
+getmode <- function(btn[,7]) {
+    uniqv <- unique(btn[,7])
+    uniqv[which.max(tabulate(match(btn[,7], uniqv)))]}
+result <- getmode(btn[,7])
+print(result)
+
+for(i in 1:nrow(btn)){
+    if(btn[i,7]== "?,"){
+	btn[i,7] = result
+        cat("ok ",i,"\n")
+        
+    }
+}
+#coluna 14 faltando dados
+getmode <- function(btn[,14]) {
+    uniqv <- unique(btn[,14])
+    uniqv[which.max(tabulate(match(btn[,14], uniqv)))]}
+result <- getmode(btn[,14])
+print(result)
+
+for(i in 1:nrow(btn)){
+    if(btn[i,14]== "?,"){
+	btn[i,14] = result
+        cat("ok ",i,"\n")
+        
+    }
+}
+#salvando a nova planilha
+write.table(btn, sep=";", file = "dadosKNNnormalizados.csv")
+# a nova planilha contem 32.561 linhas
+#pego 10% para a base de teste que foram as ultimas 3.256  linhas da planilha dadosKNNnormalizados.
+#abro as 2 planilhas 
+btrena=read.table("C:\\Users\\marcu\\Desktop\\MINERAÇÃO\\baseDEtreinamento.csv", sep=";",stringsAsFactors = FALSE)
+bteste=read.table("C:\\Users\\marcu\\Desktop\\MINERAÇÃO\\baseDEteste.csv", sep=";",stringsAsFactors = FALSE)
+
+#deu certo
+for(j in 1:nrow(bteste)){
+    print(j)
+    for(i in 1:nrow(btrena)){
+        cont=0
+        for(k in 1:14){
+            conttotal=conttotal+1
+            if(bteste[j,k]==btrena[i,k]){
+                cont=cont+1;
+            }
+        }
+        btrena[i,16]=cont/14
+    }
+    a<-order(btrena[,16],decreasing=TRUE)
+    for(b in 1:3 ){
+        btrena[a[b],15]
+        vetnovo[b]=(btrena[a[b],15])
+    }
+    result <- getmode(vetnovo)
+    cat("linha ",j,"valor ",result,"\n")
+    bteste[j,15]=result
+}
+write.table(bteste, sep=";", file = "algoritmoKKN3.csv")
+#repito o passo para achar a tabela com o k valor de 57 pois e a rais de 3256
+btrena=read.table("C:\\Users\\marcu\\Desktop\\MINERAÇÃO\\baseDEtreinamento.csv", sep=";",stringsAsFactors = FALSE)
+bteste=read.table("C:\\Users\\marcu\\Desktop\\MINERAÇÃO\\baseDEteste.csv", sep=";",stringsAsFactors = FALSE)
+
+#deu certo
+for(j in 1:nrow(bteste)){
+    print(j)
+    for(i in 1:nrow(btrena)){
+        cont=0
+        for(k in 1:14){
+            conttotal=conttotal+1
+            if(bteste[j,k]==btrena[i,k]){
+                cont=cont+1;
+            }
+        }
+        btrena[i,16]=cont/14
+    }
+    a<-order(btrena[,16],decreasing=TRUE)
+    for(b in 1:57 ){
+        btrena[a[b],15]
+        vetnovo[b]=(btrena[a[b],15])
+    }
+    result <- getmode(vetnovo)
+    cat("linha ",j,"valor ",result,"\n")
+    bteste[j,15]=result
+}
+write.table(bteste, sep=";", file = "algoritmoKKN3RAIS57.csv")
+
+# achar os verdadeiros positivos falsos positivos , verdadeiros negativos, falsos negativos
+knn3=read.table("C:\\Users\\marcu\\Desktop\\MINERAÇÃO\\algoritmoKKN3FInalizado.csv", sep=";",stringsAsFactors = FALSE)
+knnraiz=read.table("C:\\Users\\marcu\\Desktop\\MINERAÇÃO\\algoritmoKKNRAIS57.csv", sep=";",stringsAsFactors = FALSE)
+besperado=read.table("C:\\Users\\marcu\\Desktop\\MINERAÇÃO\\baseDEtesteResultadoesperado.csv", sep=";",stringsAsFactors = FALSE)
+#vp=receber espectativa era <=50k por ano resultado foi <=50k
+#vn=receber espectativa era <=50k por ano resultado foi >50k 
+#fp=receber espectativa era >50k por ano resultado foi >50k
+#fn=receber espectativa era >50k por ano resultado foi <=50k
+	#knn3
+vp=0
+vn=0
+fp=0
+fn=0
+for(i in 1:nrow(besperado)){
+    if(besperado[i,1]=="<=50K"&& knn3[i,15]=="<=50K"){
+       vp=vp+1
+    }
+    if(besperado[i,1]=="<=50K"&& knn3[i,15]==">50K"){
+        vn=vn+1
+    }
+    if(besperado[i,1]==">50K"&& knn3[i,15]==">50K"){
+        fp=fp+1
+    }
+    if(besperado[i,1]==">50K"&& knn3[i,15]=="<=50K"){
+        fn=fn+1
+    }
+}
+print(vp)#1634
+print(vn)#251
+print(fp)#698
+print(fn)#673
+	#knn57(raiz)
+vp=0
+vn=0
+fp=0
+fn=0
+for(i in 1:nrow(besperado)){
+    if(besperado[i,1]=="<=50K"&& knnraiz[i,15]=="<=50K"){
+       vp=vp+1
+    }
+    if(besperado[i,1]=="<=50K"&& knnraiz[i,15]==">50K"){
+        vn=vn+1
+    }
+    if(besperado[i,1]==">50K"&& knnraiz[i,15]==">50K"){
+        fp=fp+1
+    }
+    if(besperado[i,1]==">50K"&& knnraiz[i,15]=="<=50K"){
+        fn=fn+1
+    }
+}
+print(vp)#1720
+print(vn)#165
+print(fp)#663
+print(fn)#708
